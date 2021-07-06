@@ -31,10 +31,10 @@ var zombie1Die;
 var zombies1Group;
 var zombies2Group;
 var zombies3group;
+var NinjaAttack1Img;
+var NinjaAttack2img;
 var NinjaAttack1;
 var NinjaAttack2;
-var NinjaAttack3;
-var NinjaAttack4;
 var zombie2Run;
 var zombie2RunImg;
 var zombie2Die;
@@ -44,6 +44,17 @@ var zombie3RunImg;
 var batsGroup;
 var bats;
 var batsImg;
+var weapon;
+var weaponImg;
+var heart1;
+var heart1Img;
+var heart2;
+var heart2Img;
+var heart3;
+var heart3Img;
+var weaponsGroup;
+var score;
+var 
 
 function preload(){
 
@@ -66,23 +77,16 @@ function preload(){
 
   NinjaJump = loadAnimation("images/Ninja20Jump.png", "images/Ninja21Jump.png", "images/Ninja22Jump.png",
                              "images/Ninja23Jump.png", "images/Ninja24Jump.png", "images/Ninja25Jump.png",
-                              "images/Ninja26Jump.png", "images/Ninja27Jump.png" );   
-  
-  NinjaAttack1 = loadAnimation("images/NinjaAttack1Slash.png", "images/NinjaAttack2Slash.png", 
-                                "images/NinjaAttack3Slash.png", "images/NinjaAttack4Slash.png", 
-                                 "images/NinjaAttack5Slash.png", "images/NinjaAttack6Slash.png", 
-                                  "images/NinjaAttack7Slash.png");
+                              "images/Ninja26Jump.png", "images/Ninja27Jump.png" );
 
-  NinjaAttack2 = loadAnimation("images/NinjaAttack8SlashAlt.png", "images/NinjaAttack9SlashAlt.png", 
-                                "images/NinjaAttack10SlashAlt.png", "images/NinjaAttack11SlashAlt.png");                             
 
-  NinjaAttack3 = loadAnimation("images/NinjaAttack12SlashExtend.png", "images/NinjaAttack13SlashExtend.png",
+  NinjaAttack1Img = loadAnimation("images/NinjaAttack12SlashExtend.png", "images/NinjaAttack13SlashExtend.png",
                                 "images/NinjaAttack14SlashExtend.png", "images/NinjaAttack15SlashExtend.png", 
                                  "images/NinjaAttack16SlashExtend.png", "images/NinjaAttack17SlashExtend.png", 
                                   "images/NinjaAttack18SlashExtend.png", "images/NinjaAttack19SlashExtend.png"); 
                                   
-  NinjaAttack4 = loadAnimation("images/NinjaAttack20SlashMidAir.png", "images/NinjaAttack21SlashMidAir.png", 
-                                "images/NinjaAttack22SlashMidAir.png", "images/NinjaAttack23SlashMidAir.png", 
+  NinjaAttack2Img = loadAnimation("images/NinjaAttack20SlashMidAir.png", "images/NinjaAttack21SlashMidAir.png", 
+                               "images/NinjaAttack22SlashMidAir.png", "images/NinjaAttack23SlashMidAir.png", 
                                  "images/NinjaAttack24SlashMidAir.png", "images/NinjaAttack25SlashMidAir.png");                               
 
   zombie1RunImg = loadAnimation("images/Zombie1Run.png", "images/Zombie2Run.png", "images/Zombie3Run.png", 
@@ -109,6 +113,15 @@ function preload(){
                             "images/Bat11.png", "images/Bat12.png", "images/Bat13.png", "images/Bat14.png", 
                              "images/Bat15.png", "images/Bat16.png");                               
                                   
+  weaponImg = loadImage("images/Weapon.png");
+
+  heart1Img = loadImage("images/Heart1.png");
+
+  heart2Img = loadImage("images/Heart2.png");
+
+  heart3Img = loadImage("images/Heart3.png");
+
+
                                    
 }
 
@@ -151,13 +164,29 @@ function setup() {
    
    Ninja1.addAnimation("jump", NinjaJump);
 
-   Ninja1.addAnimation("Ninja1", NinjaAttack1);
 
-   Ninja1.addAnimation("Ninja2", NinjaAttack2);
+   NinjaAttack1 = createSprite(displayWidth/2-500, displayHeight/2+190, 10, 10);
+   NinjaAttack1.addAnimation("NinjaAttack1", NinjaAttack1Img)
+   NinjaAttack1.scale = 2.5;
+   NinjaAttack1.visible = false;
 
-   Ninja1.addAnimation("Ninja3", NinjaAttack3);
+   NinjaAttack2 = createSprite(displayWidth/2-500, displayHeight/2+190, 10, 10);
+   NinjaAttack2.addAnimation("NinjaAttack2", NinjaAttack2Img)
+   NinjaAttack2.scale = 2.5;
+   NinjaAttack2.visible = false;
 
-   Ninja1.addAnimation("Ninja4", NinjaAttack4);
+   heart1 = createSprite(1100,50,10,10);
+   heart1.addImage(heart1Img);
+   heart1.scale = 3.5;
+
+   heart2 = createSprite(1160,50,10,10);
+   heart2.addImage(heart2Img);
+   heart2.scale = 3.5;
+
+   heart3 = createSprite(1220,50,10,10);
+   heart3.addImage(heart3Img);
+   heart3.scale = 3.5;
+
 
 
    //create Obstacle Group
@@ -171,7 +200,10 @@ function setup() {
    //create Bats Group
    batsGroup = createGroup();
 
+   //create weapons Group
+   weaponsGroup = createGroup();
 
+   score = 0;
 
 }
 
@@ -188,11 +220,20 @@ function draw() {
      Bg1.visible = false;
      Ninja1.visible = false;
      InvisibleGround.visible = false;
+     heart1.visible = false;
+     heart2.visible = false;
+     heart3.visible = false;
+     zombies1Group.setVisibleEach(false);
+     zombies2Group.setVisibleEach(false);
+     zombies3group.setVisibleEach(false);
+     NinjaAttack1.visible = false;
+     NinjaAttack2.visible = false;
     
 
      if(mousePressedOver(Start)){
        gameState = "play";
      }
+  
   }
 
   //Play State
@@ -206,6 +247,16 @@ function draw() {
     Bg1.visible = true;
     Bg1.velocityX = -5;
     Ninja1.visible = true;
+    heart1.visible = true;
+    heart2.visible = true;
+    heart3.visible = true;
+    zombies1Group.setVisibleEach(true);
+    zombies2Group.setVisibleEach(true);
+    zombies3group.setVisibleEach(true);
+    NinjaAttack1.visible = true;
+    NinjaAttack2.visible = true;
+
+  
   
 
     if(Bg1.x < 0){
@@ -221,43 +272,46 @@ function draw() {
        Ninja1.changeAnimation("running", NinjaRun);
      }
 
-     if(keyWentDown("w")){
-       Ninja1.changeAnimation("Ninja1", NinjaAttack1);
-       Ninja1.velocityY = -10;
+//     if(keyWentDown("w")){
+//     Ninja1.changeAnimation("Ninja1", NinjaAttack1);
+//       Ninja1.velocityY = -10;
+//     }
+//
+//     if(keyWentDown("a")){
+//       Ninja1.changeAnimation("Ninja2", NinjaAttack2);
+//       Ninja1.velocityY = -10;
+//     }
+//    
+        if(keyWentDown("s")){
+          NinjaAttack1.changeAnimation("NinjaAttack1", NinjaAttack1);
+         // NinjaAttack1.velocityY = -10;
+          NinjaAttack1.visible = true;
+          Ninja1.visible = false;
+        }
+
+      if(keyWentDown("d")){
+         NinjaAttack2.changeAnimation("NinjaAttack2", NinjaAttack2);
+         //NinjaAttack2.velocityY = -10;
+         NinjaAttack2.visible = true;
      }
 
-     if(keyWentDown("a")){
-       Ninja1.changeAnimation("Ninja2", NinjaAttack2);
-       Ninja1.velocityY = -10;
+//     if(keyWentUp("w")){
+//      Ninja1.changeAnimation("running", NinjaRun);
+//    }
+//
+//    if(keyWentUp("a")){
+//      Ninja1.changeAnimation("running", NinjaRun);
+//    }
+//
+      if(keyWentUp("s")){
+       Ninja1.changeAnimation("running", NinjaRun);
+       NinjaAttack1.visible = false;
+      }
+
+      if(keyWentUp("d")){
+       Ninja1.changeAnimation("running", NinjaRun);
+       NinjaAttack2.visible = false;
      }
-     
-     if(keyWentDown("s")){
-       Ninja1.changeAnimation("Ninja3", NinjaAttack3);
-       Ninja1.velocityY = -10;
-     }
-
-     if(keyWentDown("d")){
-       Ninja1.changeAnimation("Ninja4", NinjaAttack4);
-       Ninja1.velocityY = -10;
-     }
-
-     if(keyWentUp("w")){
-      Ninja1.changeAnimation("running", NinjaRun);
-    }
-
-    if(keyWentUp("a")){
-      Ninja1.changeAnimation("running", NinjaRun);
-    }
-
-    if(keyWentUp("s")){
-      Ninja1.changeAnimation("running", NinjaRun);
-    }
-
-    if(keyWentUp("d")){
-      Ninja1.changeAnimation("running", NinjaRun);
-    }
-
-
 
 
 
@@ -265,29 +319,46 @@ function draw() {
      Ninja1.velocityY = Ninja1.velocityY + 0.5;
 
 
-    //spawn obstacles on the ground
-    spawnObstacles();
-
-   //spawn zombies on the ground
-    spawnZombies1();
-    spawnZombies2();
-    spawnZombies3(); 
-    
+       
     //spawn bats on the sky
     spawnBats();
- 
 
+    //spawn weapon
+    spawnWeapon();
+
+ // spawn  zombies and obstacles on the ground
+      var ran = Math.round(random(1,4));
+    if(frameCount % 300 == 0){
+     if(ran == 1){
+       spawnZombies1();
+     }
+     else if(ran == 2){
+      spawnZombies2();
+     }
+     else if(ran == 3) {
+       spawnZombies3();
+     }
+     else{
+       spawnObstacles();
+     }
+    }
 
   }
 
   
 
   drawSprites();
+
+  //displaying score
+  textSize(40);
+  fill("black")
+
+  text("Score: "+ score, 100,50);
+  
   }
 
 
 function spawnObstacles(){
-  if (frameCount % 200 === 0){
     var obstacle = createSprite(displayWidth,displayHeight/2 + 250,10,10);
     obstacle.addImage(obstacle1);
      
@@ -300,13 +371,14 @@ function spawnObstacles(){
     //add each obstacle to the group
      obstaclesGroup.add(obstacle);
   }
-}
+
+
+
 
 function spawnZombies1(){
-  if (frameCount % 300 === 0){
-    var zombie1Run = createSprite(displayWidth,displayHeight/2 + 195,10,10);
+  var zombie1Run = createSprite(displayWidth,displayHeight/2 + 195,10,10);
     zombie1Run.addAnimation("Zombie1Run", zombie1RunImg);
-    //zombieDie.addAnimation("ZombieDie", zombieDieImg);
+    zombie1Run.addAnimation("Zombie1Die", zombie1DieImg);
 
     //assign scale and lifetime to the zombie
     zombie1Run.scale = 2.5;
@@ -317,12 +389,11 @@ function spawnZombies1(){
     //add each zombie to the group
      zombies1Group.add(zombie1Run);
 
-  }
-}
+
+    }
 
 
 function spawnZombies2(){
-  if(frameCount % 500 === 0){
     var zombie2Run = createSprite(displayWidth,displayHeight/2 + 195,10,10);
     zombie2Run.addAnimation("Zombie2Run", zombie2RunImg);
 
@@ -337,11 +408,10 @@ function spawnZombies2(){
 
  
   }
-}
+
 
 
 function spawnZombies3(){
-  if(frameCount % 700 === 0){
     var zombie3Run = createSprite(displayWidth,displayHeight/2 + 195,10,10);
     zombie3Run.addAnimation("Zombie3Run", zombie3RunImg);
 
@@ -354,7 +424,7 @@ function spawnZombies3(){
     //add each zombie to the group
     zombies3group.add(zombie3Run);
   }
-}
+
 
 function spawnBats(){
   if(frameCount % 600 === 0){
@@ -372,21 +442,22 @@ function spawnBats(){
   }
 }
 
-function spawnCoins(){
+function spawnWeapon(){
 	if(frameCount%200 === 0){
-		for(var i=0 ; i<3 ;i++){
-			coin = createSprite(1200+i*20,200 ,10,10);
-			coin.addImage("coin",coinimg);
+	    
+      weapon = createSprite(width-100,height-500,10,10);
+			weapon.addImage(weaponImg);
 
       //assign scale and lifetime to the weopon
-			coin.velocityX = -4;
-			coin.lifetime = 1000;
+			weapon.velocityX = -4;
+			weapon.lifetime = 1000;
+      weapon.scale = 5;
 
       //add each weopon to the group
-			coinGroup.add(coin);
+			weaponsGroup.add(weapon);
 		}
 	}
-}
+
 
 
 
